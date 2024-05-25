@@ -90,7 +90,12 @@ struct RegisterView: View {
     
     func registerUser(username: String, password: String, email: String) {
         let db = Firestore.firestore()
-        let userData = ["username": username, "password": password, "email": email]
+        let userData: [String: Any] = [
+            "username": username,
+            "password": password,
+            "email": email,
+            "balance": 300000.0 // Balance alanını burada 300000 olarak ekliyoruz
+        ]
         
         db.collection("users").document(username).setData(userData) { error in
             if let error = error {

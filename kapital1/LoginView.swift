@@ -48,7 +48,12 @@ struct LoginView: View {
             }
             
             Button(action: {
-                loginUser(username: username, password: password)
+                if username.isEmpty || password.isEmpty {
+                    loginError = true
+                    errorMessage = "Kullanıcı adı ve şifre giriniz."
+                } else {
+                    loginUser(username: username, password: password)
+                }
             }) {
                 Text("Giriş Yap")
                     .font(.title2)
