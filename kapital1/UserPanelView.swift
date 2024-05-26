@@ -5,6 +5,7 @@ struct UserPanelView: View {
     var username: String
     @Binding var isLoggedIn: Bool
     @State private var balance: Double = 0.0
+    @State private var userBusinesses: [BusinessItem] = []
 
     var body: some View {
         NavigationView {
@@ -41,6 +42,22 @@ struct UserPanelView: View {
                 
                 Spacer()
                 
+                ForEach(userBusinesses) { business in
+                    NavigationLink(destination: BusinessDetailView(business: business)) {
+                        Text(business.name)
+                            .font(.title2)
+                            .fontWeight(.semibold)
+                            .padding()
+                            .frame(maxWidth: .infinity)
+                            .background(Color.blue)
+                            .foregroundColor(.white)
+                            .cornerRadius(10)
+                            .shadow(radius: 5)
+                    }
+                    .padding(.horizontal)
+                    .padding(.bottom, 10)
+                }
+
                 NavigationLink(destination: TransferView(username: username, onTransferCompleted: fetchBalance)) {
                     Text("Para Transferi")
                         .font(.title2)
@@ -69,8 +86,22 @@ struct UserPanelView: View {
                 .padding(.horizontal)
                 .padding(.bottom, 10)
                 
-                NavigationLink(destination: ProfileView(username: username)) {
-                    Text("Profil")
+                NavigationLink(destination: GlobalMarketView(username: username, balance: $balance)) {
+                    Text("Global Market")
+                        .font(.title2)
+                        .fontWeight(.semibold)
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(Color.purple)
+                        .foregroundColor(.white)
+                        .cornerRadius(10)
+                        .shadow(radius: 5)
+                }
+                .padding(.horizontal)
+                .padding(.bottom, 10)
+                
+                NavigationLink(destination: BusinessView(username: username, balance: $balance)) {
+                    Text("İşletmeler")
                         .font(.title2)
                         .fontWeight(.semibold)
                         .padding()
@@ -105,7 +136,10 @@ struct UserPanelView: View {
             }
             .background(Color(uiColor: UIColor.systemBackground))
             .edgesIgnoringSafeArea(.all)
-            .onAppear(perform: fetchBalance)
+            .onAppear {
+                fetchBalance()
+                fetchUserBusinesses()
+            }
         }
     }
 
@@ -120,6 +154,22 @@ struct UserPanelView: View {
                 }
             } else {
                 print("User document does not exist")
+            }
+        }
+    }
+
+    func fetchUserBusinesses() {
+        let db = Firestore.firestore()
+        let userRef = db.collection("users").document(username)
+        userRef.collection("businesses").getDocuments { snapshot, error in
+            if let error = error {
+                print("User businesses çekilirken hata oluştu: \(error)")
+            } else {
+                if let snapshot = snapshot {
+                    self.userBusinesses = snapshot.documents.compactMap { document in
+                        try? document.data(as: BusinessItem.self)
+                    }
+                }
             }
         }
     }
