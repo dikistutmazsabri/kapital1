@@ -7,6 +7,7 @@ struct Kapital1App: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(AppViewModel())
         }
     }
 }

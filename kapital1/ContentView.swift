@@ -10,6 +10,8 @@ struct ContentView: View {
     @State private var showSuccessMessage: Bool = false
     @State private var isLoggedIn: Bool = false
 
+    @EnvironmentObject var appViewModel: AppViewModel
+
     var body: some View {
         VStack {
             if showSuccessMessage {
@@ -22,6 +24,8 @@ struct ContentView: View {
                 UserPanelView(username: registeredUsername, isLoggedIn: $isLoggedIn)
                     .onAppear {
                         showSuccessMessage = false
+                        appViewModel.username = registeredUsername // Kullanıcı adını ayarla
+                        appViewModel.isLoggedIn = true
                     }
             } else if showRegisterView {
                 RegisterView(isRegistered: $isRegistered, registeredUsername: $registeredUsername, registeredPassword: $registeredPassword, registeredEmail: $registeredEmail, showRegisterView: $showRegisterView, showSuccessMessage: $showSuccessMessage)
@@ -43,6 +47,8 @@ struct ContentView: View {
             registeredPassword = password
             isLoggedIn = true
             showSuccessMessage = false
+            appViewModel.username = username // Kullanıcı adını ayarla
+            appViewModel.isLoggedIn = true
         }
     }
 }

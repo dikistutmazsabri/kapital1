@@ -1,9 +1,9 @@
-import Foundation
+import SwiftUI
+import FirebaseFirestore
 import FirebaseFirestoreSwift
 
-struct BusinessItem: Identifiable, Codable {
+struct MarketItem: Identifiable, Codable {
     @DocumentID var id: String?
     var name: String
     var price: Double
-    var requiredProducts: [RequiredProduct]
 }
